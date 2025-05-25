@@ -1,0 +1,477 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Clothing Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        :root {
+            --primary-color: #ff6f00;
+            --primary-dark: #e65100;
+            --secondary-color: #fff3e0;
+            --accent-color: #ffc107;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --gradient-primary: linear-gradient(135deg, #ff6f00 0%, #ff8f00 100%);
+            --background-light: #FAF1E6;
+            --header-bg: #E4EFE7;
+            --header-scrolled-bg: #DDEB9D;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-top: 70px;
+            margin: 0;
+        }
+
+        .main-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            background: var(--header-bg);
+            box-shadow: 0 2px 10px var(--shadow-light);
+        }
+
+            .main-header.scrolled {
+                background: var(--header-scrolled-bg);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px var(--shadow-medium);
+            }
+
+        .navbar {
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: lightpink;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+            .navbar-brand:hover {
+                transform: scale(1.05);
+            }
+
+            .navbar-brand i {
+                font-size: 1.8rem;
+                color: var(--accent-color);
+                transition: color 0.3s ease;
+            }
+
+            .navbar-brand:hover i {
+                color: #ff9800;
+            }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+
+            .navbar-nav .nav-link {
+                color: var(--text-dark);
+                font-weight: 500;
+                margin: 0 0.3rem;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                transition: all 0.3s ease;
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.95rem;
+                border: 1px solid rgba(255, 111, 0, 0.2);
+            }
+
+                .navbar-nav .nav-link:hover,
+                .navbar-nav .nav-link.active {
+                    background: var(--gradient-primary);
+                    color: white;
+                    transform: translateY(-2px) scale(1.03);
+                    box-shadow: 0 4px 10px rgba(255, 111, 0, 0.2);
+                    border-color: transparent;
+                }
+
+                .navbar-nav .nav-link i {
+                    font-size: 1rem;
+                    transition: transform 0.3s ease;
+                }
+
+                .navbar-nav .nav-link:hover i {
+                    transform: scale(1.2);
+                }
+
+                .navbar-nav .nav-link::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: var(--accent-color);
+                    transform: scaleX(0);
+                    transform-origin: bottom right;
+                    transition: transform 0.3s ease-out;
+                }
+
+                .navbar-nav .nav-link:hover::after {
+                    transform: scaleX(1);
+                    transform-origin: bottom left;
+                }
+
+        .navbar-toggler {
+            border: none;
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+            .navbar-toggler:hover {
+                transform: rotate(90deg);
+            }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+        .main-content {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+            .product-card .card-img-top {
+                width: 100%;
+                height: 250px;
+                object-fit: contain;
+                background-color: #f8f9fa;
+                padding: 10px;
+            }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 15px var(--shadow-medium);
+            }
+
+        .main-footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 2rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section h5 {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+            .footer-section ul li {
+                margin-bottom: 0.5rem;
+            }
+
+                .footer-section ul li a {
+                    color: white;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                    font-size: 0.9rem;
+                }
+
+                    .footer-section ul li a:hover {
+                        color: var(--accent-color);
+                    }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+            .social-links a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 35px;
+                height: 35px;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+                .social-links a:hover {
+                    background: var(--accent-color);
+                    color: var(--text-dark);
+                    transform: translateY(-3px);
+                }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+            text-align: center;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        @@media (max-width: 992px) {
+            .navbar-nav {
+                background: rgba(255, 111, 0, 0.95);
+                border-radius: 10px;
+                margin-top: 0.5rem;
+                padding: 0.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+                .navbar-nav .nav-link {
+                    margin: 0.2rem 0;
+                    padding: 0.5rem 1rem;
+                    width: 100%;
+                    justify-content: flex-start;
+                }
+        }
+
+        @@media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
+
+                .navbar-brand i {
+                    font-size: 1.6rem;
+                }
+
+            .product-card .card-img-top {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header" id="mainHeader">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="fas fa-tshirt"></i> Clothing Store
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Account/Register">
+                                    <i class="fas fa-user-plus"></i> Đăng ký
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Auth/ChooseRole">
+                                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Home/About">
+                                    <i class="fas fa-info-circle"></i> Giới thiệu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Contact">
+                                    <i class="fas fa-envelope"></i> Liên hệ
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/Overview">
+                                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/UserStats">
+                                    <i class="fas fa-users"></i> Thống kê người dùng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/ProductStats">
+                                    <i class="fas fa-box"></i> Thống kê sản phẩm
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/Orders">
+                                    <i class="fas fa-shopping-cart"></i> Đơn hàng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/AddAdmin">
+                                    <i class="fas fa-user-plus"></i> Thêm Admin
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/Logout">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">
+                                    <i class="fas fa-home"></i> Trang chủ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Home/About">
+                                    <i class="fas fa-info-circle"></i> Giới thiệu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Products">
+                                    <i class="fas fa-shopping-bag"></i> Sản phẩm
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Contact">
+                                    <i class="fas fa-envelope"></i> Liên hệ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Profile">
+                                    <i class="fas fa-user"></i> Hồ sơ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Account/Logout">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="container my-5">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h5><i class="fas fa-store"></i> Clothing Store</h5>
+                    <p>Cửa hàng thời trang hàng đầu với những sản phẩm chất lượng cao, phù hợp với mọi phong cách và xu hướng hiện đại.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/nguyen.tan.897249"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5><i class="fas fa-link"></i> Liên kết nhanh</h5>
+                    <ul>
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="/Home/About">Giới thiệu</a></li>
+                        <li><a href="/Products">Sản phẩm</a></li>
+                        <li><a href="/Contact">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5><i class="fas fa-tags"></i> Danh mục</h5>
+                    <ul>
+                        <li><a href="#">Áo thun</a></li>
+                        <li><a href="#">Áo sơ mi</a></li>
+                        <li><a href="#">Quần jeans</a></li>
+                        <li><a href="#">Áo khoác</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5><i class="fas fa-info-circle"></i> Thông tin</h5>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 127/135 Điện Biên Phủ, ĐaKao, Quận 1, TPHCM</li>
+                        <li><i class="fas fa-phone"></i> +84 376 069 567</li>
+                        <li><i class="fas fa-envelope"></i> tanndh.dev@gmail.com</li>
+                        <li><i class="fas fa-clock"></i> 9:00 - 21:00 (Thứ 2 - CN)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Clothing Store - Developed by Tnn</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        window.addEventListener('scroll', function () {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        const currentLocation = window.location.pathname;
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentLocation || (currentLocation.startsWith('/Admin') && link.textContent.includes('Admin'))) {
+                link.classList.add('active');
+                link.style.animation = 'pulse 1.5s infinite';
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

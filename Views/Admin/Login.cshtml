@@ -1,0 +1,28 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Đăng nhập Admin";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4" style="color: var(--primary-color);">Đăng nhập Admin</h2>
+    <div class="card shadow-sm mx-auto" style="max-width: 400px; background: var(--secondary-color); border-radius: 15px;">
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(ViewBag.Error))
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+            <form asp-action="Login" asp-controller="Admin" method="post">
+                <div class="mb-3">
+                    <label class="form-label" style="color: var(--text-dark);">Email</label>
+                    <input type="email" name="email" class="form-control" style="border-radius: 10px;" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" style="color: var(--text-dark);">Mật khẩu</label>
+                    <input type="password" name="password" class="form-control" style="border-radius: 10px;" required>
+                </div>
+                <button type="submit" class="btn w-100" style="background: var(--gradient-primary); color: white; border-radius: 10px; font-weight: 600;">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</div>

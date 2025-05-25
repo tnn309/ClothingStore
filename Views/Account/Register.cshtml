@@ -1,0 +1,35 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4" style="color: var(--primary-color);">Đăng ký tài khoản</h2>
+    <div class="card shadow-sm mx-auto" style="max-width: 400px; background: var(--secondary-color); border-radius: 15px;">
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(ViewBag.Error))
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+            <form asp-action="Register" asp-controller="Account" method="post">
+                <div class="mb-3">
+                    <label class="form-label" style="color: var(--text-dark);">Email</label>
+                    <input type="email" name="email" class="form-control" style="border-radius: 10px;" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" style="color: var(--text-dark);">Mật khẩu</label>
+                    <input type="password" name="password" class="form-control" style="border-radius: 10px;" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" style="color: var(--text-dark);">Xác nhận mật khẩu</label>
+                    <input type="password" name="confirmPassword" class="form-control" style="border-radius: 10px;" required>
+                </div>
+                <button type="submit" class="btn w-100" style="background: var(--gradient-primary); color: white; border-radius: 10px; font-weight: 600;">Đăng ký</button>
+            </form>
+            <p class="text-center mt-3">
+                Đã có tài khoản? <a href="@Url.Action("Login", "Account")">Đăng nhập ngay</a>
+            </p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+﻿@model ClothingStore.Models.UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+}
+
+<div class="container-fluid my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user"></i> Chi tiết người dùng: @Model.User.UserName</h2>
+        <a href="@Url.Action("Users")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Thông tin người dùng -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Thông tin cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-5x text-muted"></i>
+                    </div>
+                    <p><strong>ID:</strong> @Model.User.Id</p>
+                    <p><strong>Tên đăng nhập:</strong> @Model.User.UserName</p>
+                    <p><strong>Email:</strong> @Model.User.Email</p>
+                    <p><strong>Số điện thoại:</strong> @(Model.User.PhoneNumber ?? "Chưa cập nhật")</p>
+                    <p>
+                        <strong>Email xác thực:</strong>
+                        @if (Model.User.EmailConfirmed)
+                        {
+                            <span class="badge bg-success">��ã xác thực</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">Chưa xác thực</span>
+                        }
+                    </p>
+
+                    <!-- Hiển thị mật khẩu hash (không an toàn nhưng theo yêu cầu) -->
+                    <div class="mt-3">
+                        <p><strong>Mật khẩu (Hash):</strong></p>
+                        <div class="alert alert-warning">
+                            <small class="text-break">@Model.User.PasswordHash</small>
+                        </div>
+                        <small class="text-muted">⚠️ Đây là mật khẩu đã được mã hóa, không thể giải mã ngược.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thống kê -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Thống kê mua hàng</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="text-primary">@Model.TotalOrders</h3>
+                            <small class="text-muted">Tổng đơn hàng</small>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-success">@Model.TotalSpent.ToString("N0")₫</h3>
+                            <small class="text-muted">Tổng chi tiêu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <!-- Lịch sử đơn hàng -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-bag"></i> Lịch sử đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Orders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Phương thức</th>
+                                        <th>Địa chỉ giao hàng</th>
+                                        <th>Số sản phẩm</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.Orders)
+                                    {
+                                        <tr>
+                                            <td><strong>#@order.Id</strong></td>
+                                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td><span class="text-success fw-bold">@order.Total.ToString("N0")₫</span></td>
+                                            <td>
+                                                @if (order.PaymentMethod == "COD")
+                                                {
+                                                    <span class="badge bg-warning">COD</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">VNPay</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>
+                                                    @order.FullName<br>
+                                                    @order.Address<br>
+                                                    @order.Phone
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@order.Items.Count sản phẩm</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Người dùng này chưa có đơn hàng nào</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

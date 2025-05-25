@@ -1,0 +1,169 @@
+﻿@model ClothingStore.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-receipt"></i> Chi tiết đơn hàng #@Model.Id</h2>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại hồ sơ
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Thông tin đơn hàng -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Thông tin đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Mã đơn hàng:</strong> #@Model.Id</p>
+                            <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                            <p>
+                                <strong>Phương thức thanh toán:</strong>
+                                @if (Model.PaymentMethod == "COD")
+                                {
+                                    <span class="badge bg-warning">Thanh toán khi nhận hàng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary">VNPay</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Người nhận:</strong> @Model.FullName</p>
+                            <p><strong>Địa chỉ:</strong> @Model.Address</p>
+                            <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sản phẩm -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Danh sách sản phẩm</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td><strong>@item.Name</strong></td>
+                                        <td><span class="badge bg-secondary">@item.Quantity</span></td>
+                                        <td><span class="text-success">@item.Price.ToString("N0")₫</span></td>
+                                        <td><span class="text-primary fw-bold">@((item.Price * item.Quantity).ToString("N0"))₫</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Tóm tắt đơn hàng -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Tóm tắt đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Số lượng sản phẩm:</span>
+                        <span><strong>@Model.Items.Sum(i => i.Quantity)</strong></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span>@Model.Total.ToString("N0")₫</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển:</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span><strong>Tổng cộng:</strong></span>
+                        <span class="text-success fw-bold fs-5">@Model.Total.ToString("N0")₫</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trạng thái đơn hàng -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Trạng thái đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Đơn hàng đã được đặt</span>
+                            <small class="text-muted d-block">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                        <div class="timeline-item completed">
+                            <i class="fas fa-credit-card text-success"></i>
+                            <span>Thanh toán thành công</span>
+                        </div>
+                        <div class="timeline-item completed">
+                            <i class="fas fa-box text-success"></i>
+                            <span>Đang chuẩn bị hàng</span>
+                        </div>
+                        <div class="timeline-item completed">
+                            <i class="fas fa-truck text-success"></i>
+                            <span>Đã giao hàng thành công</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: -22px;
+        top: 20px;
+        width: 2px;
+        height: 100%;
+        background-color: #28a745;
+    }
+
+    .timeline-item i {
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        background-color: white;
+        border-radius: 50%;
+    }
+</style>

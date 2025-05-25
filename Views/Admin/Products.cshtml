@@ -1,0 +1,203 @@
+﻿@model IEnumerable<ClothingStore.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+}
+
+<div class="container-fluid my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-box"></i> Quản lý sản phẩm</h2>
+        <div>
+            <a href="@Url.Action("AddProduct")" class="btn btn-success me-2">
+                <i class="fas fa-plus"></i> Thêm sản phẩm
+            </a>
+            <a href="@Url.Action("Overview")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Thống kê nhanh -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Count()</h3>
+                    <p>Tổng sản phẩm</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.GroupBy(p => p.Category).Count()</h3>
+                    <p>Loại sản phẩm</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Sum(p => p.Price).ToString("N0")₫</h3>
+                    <p>Tổng giá trị</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3>@(Model.Any() ? Model.Average(p => p.Price).ToString("N0") : "0")₫</h3>
+                    <p>Giá trung bình</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Danh sách sản phẩm</h5>
+            <div>
+                <form asp-action="AutoCategorizeProducts" method="post" style="display: inline;" class="me-2">
+                    <button type="submit" class="btn btn-info btn-sm"
+                            onclick="return confirm('Tự động phân loại sản phẩm dựa trên tên?');">
+                        <i class="fas fa-tags"></i> Auto Categorize
+                    </button>
+                </form>
+                <form asp-action="ReseedData" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-warning btn-sm"
+                            onclick="return confirm('Bạn có chắc muốn cập nhật category cho các sản phẩm?');">
+                        <i class="fas fa-sync"></i> Update Categories
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover" id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Loại</th>
+                                <th>Mô tả</th>
+                                <th>Giá</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model)
+                            {
+                                <tr>
+                                    <td><strong>#@product.Id</strong></td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                        {
+                                            <img src="@product.ImageUrl" alt="@product.Name"
+                                                 class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                                 style="width: 50px; height: 50px;">
+                                                <i class="fas fa-image text-muted"></i>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@product.Name</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@product.Category</span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(product.Description))
+                                        {
+                                            <span class="text-muted">
+                                                @(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">Không có mô tả</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold">@product.Price.ToString("N0")₫</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("EditProduct", new { id = product.Id })"
+                                               class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="@Url.Action("DeleteProduct", new { id = product.Id })"
+                                               class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có sản phẩm nào</h5>
+                    <a href="@Url.Action("AddProduct")" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Thêm sản phẩm đầu tiên
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#productsTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+            },
+            "pageLength": 25,
+            "order": [[3, "asc"], [2, "asc"]] // Sắp xếp theo category rồi tên
+        });
+    });
+</script>
+
+<style>
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .img-thumbnail {
+        border-radius: 8px;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+</style>

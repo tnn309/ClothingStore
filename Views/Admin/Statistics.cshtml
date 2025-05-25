@@ -1,0 +1,48 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Thống kê";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Thống kê</h2>
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Phương thức thanh toán</h5>
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const ctx = document.getElementById('paymentChart').getContext('2d');
+        const paymentChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['COD', 'VNPay'],
+                datasets: [{
+                    data: [@ViewBag.CODOrders, @ViewBag.VNPayOrders],
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                    hoverBackgroundColor: ['#FF6384', '#36A2EB']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Thống kê phương thức thanh toán'
+                    }
+                }
+            }
+        });
+    </script>
+}

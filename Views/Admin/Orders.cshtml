@@ -1,0 +1,50 @@
+﻿@model List<ClothingStore.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+}
+
+<div class="container my-5 admin-dashboard">
+    <h2 class="text-center mb-4" style="color: var(--primary-color);">Danh sách đơn hàng</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Phương thức</th>
+                <th>Chi tiết</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.Id</td>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@order.Total.ToString("N0")₫</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>
+                        <button class="btn btn-sm" style="background: var(--gradient-primary); color: white; border-radius: 10px;" type="button" data-bs-toggle="collapse" data-bs-target="#orderDetails-@order.Id" aria-expanded="false">
+                            Xem chi tiết
+                        </button>
+                        <div class="collapse mt-2" id="orderDetails-@order.Id">
+                            <div class="card card-body" style="background: var(--secondary-color); border-radius: 10px;">
+                                <p><strong>Họ và tên:</strong> @order.FullName</p>
+                                <p><strong>Địa chỉ:</strong> @order.Address</p>
+                                <p><strong>Số điện thoại:</strong> @order.Phone</p>
+                                <h6>Sản phẩm:</h6>
+                                <ul>
+                                    @foreach (var item in order.Items)
+                                    {
+                                        <li>@item.Name - @item.Price.ToString("N0")₫</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

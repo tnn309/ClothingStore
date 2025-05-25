@@ -1,0 +1,15 @@
+﻿@if (User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+        <span class="text-light me-2">Xin chào, @User.Identity.Name!</span>
+        <button type="submit" class="btn btn-link text-light">Đăng xuất</button>
+    </form>
+}
+else
+{
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+        </li>
+    </ul>
+}

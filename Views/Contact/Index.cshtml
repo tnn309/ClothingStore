@@ -1,0 +1,40 @@
+﻿@model ClothingStore.Models.ContactForm
+
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4" style="color: var(--primary-color);">Liên hệ với chúng tôi</h2>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    <div class="card shadow-sm mx-auto" style="max-width: 600px; background: var(--secondary-color); border-radius: 15px;">
+        <div class="card-body">
+            <form asp-action="Index" asp-controller="Contact" method="post">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label" style="color: var(--text-dark);">Họ và tên</label>
+                    <input asp-for="Name" class="form-control" style="border-radius: 10px;" required>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label" style="color: var(--text-dark);">Email</label>
+                    <input asp-for="Email" class="form-control" style="border-radius: 10px;" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Message" class="form-label" style="color: var(--text-dark);">Tin nhắn</label>
+                    <textarea asp-for="Message" class="form-control" rows="5" style="border-radius: 10px;" required></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn w-100" style="background: var(--gradient-primary); color: white; border-radius: 10px; font-weight: 600;">Gửi</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

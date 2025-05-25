@@ -1,0 +1,203 @@
+﻿@{
+    ViewData["Title"] = "Thống kê người dùng";
+}
+
+<div class="container-fluid my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-users"></i> Thống kê người dùng</h2>
+        <a href="@Url.Action("Overview")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại Dashboard
+        </a>
+    </div>
+
+    <!-- Thống kê tổng quan -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.TotalUsers</h3>
+                    <p>Tổng người dùng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.UsersWithOrders</h3>
+                    <p>Đã mua hàng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.UsersWithoutOrders</h3>
+                    <p>Chưa mua hàng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>@ViewBag.AdminUsers</h3>
+                    <p>Admin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Bảng danh sách người dùng -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Danh sách tất cả người dùng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Tên người dùng</th>
+                                    <th>Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Số đơn hàng</th>
+                                    <th>Tổng tiền (VNĐ)</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in ViewBag.AllUserStats)
+                                {
+                                    <tr class="@(user.IsAdmin ? "table-info" : "")">
+                                        <td>
+                                            <strong>@user.UserName</strong>
+                                            @if (user.IsAdmin)
+                                            {
+                                                <span class="badge bg-danger ms-2">ADMIN</span>
+                                            }
+                                            @if (!user.HasOrders && !user.IsAdmin)
+                                            {
+                                                <span class="badge bg-secondary ms-2">Chưa mua hàng</span>
+                                            }
+                                        </td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (user.IsAdmin)
+                                            {
+                                                <span class="badge bg-danger">Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-primary">User</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.OrderCount > 0)
+                                            {
+                                                <span class="badge bg-info">@user.OrderCount</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">0</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (user.TotalAmount > 0)
+                                            {
+                                                <span class="text-success fw-bold">@(((decimal)user.TotalAmount).ToString("N0"))₫</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">0₫</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("UserOrders", new { userId = user.UserId })"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Xem chi tiết
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Biểu đồ đơn hàng theo người dùng</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="userOrdersChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Biểu đồ đơn hàng theo người dùng
+    const ctx = document.getElementById('userOrdersChart').getContext('2d');
+    const userOrdersChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(ViewBag.ChartLabels ?? "[]"),
+            datasets: [{
+                label: 'Số đơn hàng',
+                data: @Html.Raw(ViewBag.ChartValues ?? "[]"),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // DataTable
+    $(document).ready(function () {
+        $('#usersTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+            },
+            "pageLength": 15,
+            "order": [[4, "desc"]] // Sắp xếp theo tổng tiền
+        });
+    });
+</script>
+
+<style>
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+
+    .table-info {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+</style>

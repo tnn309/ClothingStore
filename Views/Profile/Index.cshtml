@@ -1,0 +1,122 @@
+﻿@using ClothingStore.Models
+@model ClothingStore.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Thông tin cá nhân -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Thông tin cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-5x text-muted"></i>
+                    </div>
+                    <p><strong>Tên đăng nhập:</strong> @Model.User.UserName</p>
+                    <p><strong>Email:</strong> @Model.User.Email</p>
+                    <p><strong>Số điện thoại:</strong> @(Model.User.PhoneNumber ?? "Chưa cập nhật")</p>
+                    <a href="@Url.Action("Edit")" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-edit"></i> Chỉnh sửa thông tin
+                    </a>
+                </div>
+            </div>
+
+            <!-- Thống kê -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Thống kê</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h3 class="text-primary">@Model.TotalOrders</h3>
+                            <small class="text-muted">Đơn hàng</small>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-success">@Model.TotalSpent.ToString("N0")₫</h3>
+                            <small class="text-muted">Tổng chi tiêu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <!-- Lịch sử đơn hàng -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-bag"></i> Lịch sử đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Message"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model.Orders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Phương thức</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.Orders)
+                                    {
+                                        <tr>
+                                            <td><strong>#@order.Id</strong></td>
+                                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td><span class="text-success fw-bold">@order.Total.ToString("N0")₫</span></td>
+                                            <td>
+                                                @if (order.PaymentMethod == "COD")
+                                                {
+                                                    <span class="badge bg-warning">COD</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">VNPay</span>
+                                                }
+                                            </td>
+                                            <td><span class="badge bg-success">Hoàn thành</span></td>
+                                            <td>
+                                                <a href="@Url.Action("OrderDetails", new { id = order.Id })"
+                                                   class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i> Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Bạn chưa có đơn hàng nào</h5>
+                            <a href="@Url.Action("Index", "Products")" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag"></i> Mua sắm ngay
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

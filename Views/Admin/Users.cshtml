@@ -1,0 +1,305 @@
+﻿@model List<ClothingStore.Models.UserStatsViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container-fluid my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-users"></i> Quản lý người dùng</h2>
+        <a href="@Url.Action("Overview")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại Dashboard
+        </a>
+    </div>
+
+    <!-- Thống kê tổng quan -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Count</h3>
+                    <p>Tổng người dùng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Count(u => u.TotalOrders > 0)</h3>
+                    <p>Đã mua hàng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Count(u => u.TotalOrders == 0)</h3>
+                    <p>Chưa mua hàng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>@Model.Count(u => u.IsAdmin)</h3>
+                    <p>Admin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Danh sách tất cả người dùng</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Vai trò</th>
+                                <th>Số đơn hàng</th>
+                                <th>Tổng chi tiêu</th>
+                                <th>Trạng thái</th>
+                                <th>Mật khẩu</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr class="@(user.IsAdmin ? "table-info" : "")">
+                                    <td>
+                                        <strong>@user.UserName</strong>
+                                        @if (user.IsAdmin)
+                                        {
+                                            <span class="badge bg-danger ms-2">ADMIN</span>
+                                        }
+                                        @if (user.TotalOrders == 0 && !user.IsAdmin)
+                                        {
+                                            <span class="badge bg-secondary ms-2">Chưa mua hàng</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @user.Email
+                                        @if (user.EmailConfirmed)
+                                        {
+                                            <i class="fas fa-check-circle text-success ms-1" title="Email đã xác thực"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-exclamation-circle text-warning ms-1" title="Email chưa xác thực"></i>
+                                        }
+                                    </td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>
+                                        @if (user.IsAdmin)
+                                        {
+                                            <span class="badge bg-danger">Admin</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary">User</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (user.TotalOrders > 0)
+                                        {
+                                            <span class="badge bg-info">@user.TotalOrders đơn</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">0 đơn</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (user.TotalSpent > 0)
+                                        {
+                                            <span class="text-success fw-bold">@user.TotalSpent.ToString("N0")₫</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">0₫</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (user.AccountStatus == "Bị khóa")
+                                        {
+                                            <span class="badge bg-danger">Bị khóa</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Hoạt động</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-warning" onclick="showPassword('@user.UserId', '@user.UserName')">
+                                            <i class="fas fa-eye"></i> Xem
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("UserDetails", new { id = user.UserId })"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (!user.IsAdmin)
+                                            {
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                        onclick="toggleUserLock('@user.UserId', '@user.UserName', '@user.AccountStatus')">
+                                                    @if (user.AccountStatus == "Bị khóa")
+                                                    {
+                                                        <i class="fas fa-unlock"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-lock"></i>
+                                                    }
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Không có người dùng nào</h5>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal hiển thị mật khẩu -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mật khẩu của <span id="modalUserName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Lưu ý:</strong> Đây là mật khẩu đã được mã hóa (hash), không thể giải mã ngược.
+                </div>
+                <div class="form-group">
+                    <label>Password Hash:</label>
+                    <textarea class="form-control" id="passwordHash" rows="4" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="copyPassword()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hiển thị mật khẩu
+    function showPassword(userId, userName) {
+        fetch(`/Admin/GetUserPassword?userId=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('modalUserName').textContent = userName;
+                    document.getElementById('passwordHash').value = data.passwordHash;
+                    new bootstrap.Modal(document.getElementById('passwordModal')).show();
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi lấy thông tin mật khẩu');
+            });
+    }
+
+    // Copy mật khẩu
+    function copyPassword() {
+        const passwordField = document.getElementById('passwordHash');
+        passwordField.select();
+        document.execCommand('copy');
+
+        // Hiển thị thông báo
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Đã copy';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-primary');
+        }, 2000);
+    }
+
+    // Khóa/mở khóa tài khoản
+    function toggleUserLock(userId, userName, currentStatus) {
+        const action = currentStatus === 'Bị khóa' ? 'mở khóa' : 'khóa';
+
+        if (confirm(`Bạn có chắc muốn ${action} tài khoản "${userName}"?`)) {
+            fetch('/Admin/ToggleUserLock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: userId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload(); // Reload trang để cập nhật trạng thái
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra');
+                });
+        }
+    }
+
+    // DataTable cho bảng users
+    $(document).ready(function () {
+        $('#usersTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Vietnamese.json"
+            },
+            "pageLength": 25,
+            "order": [[4, "desc"]] // Sắp xếp theo số đơn hàng
+        });
+    });
+</script>
+
+<style>
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+
+    .table-info {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+</style>

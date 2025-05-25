@@ -1,0 +1,65 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Phương thức thanh toán";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Xác nhận đơn hàng</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <!-- Thông tin giao hàng -->
+            <div class="mb-4">
+                <h4 class="card-title">Thông tin giao hàng</h4>
+                <p><strong>Họ và tên:</strong> @ViewBag.FullName</p>
+                <p><strong>Địa chỉ:</strong> @ViewBag.Address</p>
+                <p><strong>Số điện thoại:</strong> @ViewBag.Phone</p>
+            </div>
+
+            <!-- Thông tin giỏ hàng -->
+            <div class="mb-4">
+                <h4 class="card-title">Sản phẩm trong giỏ hàng</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Cart)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Price.ToString("N0")₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h4 class="text-end">Tổng cộng: @ViewBag.Total.ToString("N0")₫</h4>
+            </div>
+
+            <!-- Chọn phương thức thanh toán -->
+            <div>
+                <h4 class="card-title">Phương thức thanh toán</h4>
+                <form asp-action="Payment" asp-controller="Checkout" method="post">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" required>
+                            <label class="form-check-label" for="cod">
+                                COD (Thanh toán khi nhận hàng)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="vnpay" value="VNPay" required>
+                            <label class="form-check-label" for="vnpay">
+                                VNPay (Thanh toán online)
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Xác nhận thanh toán</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

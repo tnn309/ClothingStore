@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
+
+    @if (ViewBag.Cart == null || !ViewBag.Cart.Any())
+    {
+        <p class="text-center">Giỏ hàng của bạn đang trống.</p>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">Danh sách sản phẩm</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Cart)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Price.ToString("N0")₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h4 class="text-end">Tổng cộng: @ViewBag.Total.ToString("N0")₫</h4>
+                <a href="@Url.Action("Index", "Checkout")" class="btn btn-primary w-100">Tiến hành thanh toán</a>
+            </div>
+        </div>
+    }
+</div>

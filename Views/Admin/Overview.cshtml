@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Tổng quan";
+}
+
+<h2 class="mb-4">Tổng quan Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số đơn hàng</h5>
+                <p class="card-text display-4">@ViewBag.OrderCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Doanh thu (VNĐ)</h5>
+                <p class="card-text display-4">@ViewBag.TotalRevenue.ToString("N0")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số người dùng</h5>
+                <p class="card-text display-4">@ViewBag.UserCount</p>
+                <a href="@Url.Action("UserStats")" class="btn btn-light btn-sm mt-2">Xem thống kê</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Biểu đồ doanh thu theo ngày</h5>
+        <canvas id="revenueChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('revenueChart').getContext('2d');
+            var labels = @Html.Raw(ViewBag.RevenueLabels);
+            var data = @Html.Raw(ViewBag.RevenueValues);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: value => value.toLocaleString('vi-VN') }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

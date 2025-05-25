@@ -1,0 +1,126 @@
+﻿@model IEnumerable<ClothingStore.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="fas fa-shopping-cart fa-3x text-muted"></i>
+            </div>
+            <p class="lead">Giỏ hàng của bạn đang trống.</p>
+            <a href="@Url.Action("Index", "Products")" class="btn btn-primary">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">Danh sách sản phẩm</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá</th>
+                                <th>Thành tiền</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@(item.Name ?? "Không xác định")</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@(item.Quantity ?? 0)</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold">@((item.Price ?? 0).ToString("N0"))₫</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary fw-bold">@(((item.Price ?? 0) * (item.Quantity ?? 0)).ToString("N0"))₫</span>
+                                    </td>
+                                    <td>
+                                        <form asp-action="RemoveFromCart" asp-controller="Products" method="post" style="display: inline;">
+                                            <input type="hidden" name="index" value="@index" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?');">
+                                                <i class="fas fa-trash"></i> Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <a href="@Url.Action("Index", "Products")" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h4 class="mb-3">
+                            Tổng cộng: <span class="text-success">@(ViewBag.Total?.ToString("N0") ?? "0")₫</span>
+                        </h4>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Address", "Checkout")" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-credit-card"></i> Thanh toán
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <p class="mb-2">Bạn cần đăng nhập để thanh toán</p>
+                                <a href="@Url.Action("Login", "Account")" class="btn btn-primary">Đăng nhập</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .table th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .btn-outline-danger:hover {
+        transform: scale(1.05);
+        transition: transform 0.2s;
+    }
+</style>

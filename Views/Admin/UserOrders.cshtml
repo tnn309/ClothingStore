@@ -1,0 +1,55 @@
+﻿@model List<ClothingStore.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng của " + ViewBag.UserName;
+}
+
+<h2>Đơn hàng của @ViewBag.UserName</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Danh sách đơn hàng</h5>
+        @if (Model.Any())
+        {
+            @foreach (var order in Model)
+            {
+                <div class="mb-4">
+                    <h6>Mã đơn hàng: @order.Id</h6>
+                    <p>Ngày đặt: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p>Tổng tiền: @order.Total.ToString("N0") VNĐ</p>
+                    <p>Họ tên: @order.FullName</p>
+                    <p>Địa chỉ: @order.Address</p>
+                    <p>Số điện thoại: @order.Phone</p>
+                    <p>Phương thức thanh toán: @order.PaymentMethod</p>
+                    <h6>Chi tiết sản phẩm:</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá (VNĐ)</th>
+                                <th>Số lượng</th>
+                                <th>Tổng (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.Items)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Price.ToString("N0")</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@(item.Price * item.Quantity).ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Người dùng này chưa có đơn hàng nào.</p>
+        }
+        <a href="@Url.Action("UserStats")" class="btn btn-secondary mt-3">Quay lại</a>
+    </div>
+</div>

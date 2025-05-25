@@ -1,0 +1,66 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<h2>Bảng điều khiển Admin</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số đơn hàng</h5>
+                <p class="card-text">@ViewBag.OrderCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Tổng số người dùng</h5>
+                <p class="card-text">@ViewBag.UserCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Tổng doanh thu</h5>
+                <p class="card-text">@ViewBag.TotalRevenue.ToString("N0") VNĐ</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Danh sách người dùng và đơn hàng</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tên người dùng</th>
+                    <th>Tổng tiền đơn hàng (VNĐ)</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userOrder in ViewBag.UserOrders)
+                {
+                    <tr>
+                        <td>@userOrder.UserName</td>
+                        <td>@userOrder.TotalAmount.ToString("N0")</td>
+                        <td><a href="@Url.Action("UserOrders", new { userId = userOrder.UserId })" class="btn btn-primary btn-sm">Xem chi tiết</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Phân tích doanh thu</h5>
+        <p>Thống kê phân tích doanh thu (Chưa có biểu đồ, cần thêm logic)</p>
+    </div>
+</div>

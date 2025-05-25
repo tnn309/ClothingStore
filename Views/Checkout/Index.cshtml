@@ -1,0 +1,47 @@
+﻿@model IEnumerable<ClothingStore.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Thanh toán</h2>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center">Giỏ hàng của bạn đang trống. <a href="@Url.Action("Index", "Products")" class="text-primary">Tiếp tục mua sắm</a>.</p>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">Danh sách sản phẩm</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(item.Name ?? "Không xác định")</td>
+                                <td>@(item.Quantity ?? 0)</td>
+                                <td>@((item.Price ?? 0).ToString("N0"))₫</td>
+                                <td>@(((item.Price ?? 0) * (item.Quantity ?? 0)).ToString("N0"))₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h4 class="text-end">Tổng cộng: @(ViewBag.Total?.ToString("N0") ?? "0")₫</h4>
+                <form asp-action="CompleteCheckout" method="post">
+                    <button type="submit" class="btn btn-primary w-100" onclick="return confirm('Bạn có chắc muốn xác nhận thanh toán không?');">Xác nhận thanh toán</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
