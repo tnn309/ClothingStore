@@ -41,8 +41,7 @@ Hệ thống quản lý cửa hàng thời trang xây dựng bằng ASP.NET Core
 - dotnet CLI
 - Visual Studio 2022
 
-## Download and Build -------------------------------------------------------------------------------------------------------------
-
+## Download and Build -------------------------------------------------------------
 1. Clone repository: git clone https://github.com/tnn309/ClothingStore.git
 2. Khôi phục packages : dotnet restore
 3. Cấu hình database trong appsettings.json
@@ -53,7 +52,7 @@ Hệ thống quản lý cửa hàng thời trang xây dựng bằng ASP.NET Core
 4. chạy lệnh migrations : dotnet ef database update
 5. Build 
 
-## Account Demo -------------------------------------------------------------------------------------------------------------
+## Account Demo -------------------------------------------------------------
 
 tài khoản demo : 
   admin : hungtanne@gmail.com | Tann30092004$
@@ -64,4 +63,5 @@ tài khoản demo :
 Liên hệ: tanndh.dev@gmail.com . tnn309
 ## Ảnh demo -------------------------------------------------------------------------------------------------------------
 <-- -->
+
 
